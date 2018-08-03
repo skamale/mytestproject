@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>EMI CALCULATOR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<!--[if lte IE 8]>
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+<![endif]-->
+
+
+    <link rel="stylesheet" href="http://simpleemi.com/emicalBSV1.css" />     
+ 
+  <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'></script>
+  
+  <script type = "text/javascript"  src="http://simpleemi.com/emicalv3.js" ></script>    
+  
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/wnumb/1.1.0/wNumb.min.js"></script>
+    
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/10.1.0/nouislider.min.js"></script>
+    
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/10.1.0/nouislider.min.css" />    
+  
+  
+  <script type="text/javascript">
+  $(document).ready(function() {
+   var slideramount = document.getElementById('slideramount');
+   var sliderrate = document.getElementById('sliderrate');
+   var sliderterm = document.getElementById('sliderterm');
+   noUiSlider.create(slideramount, {
+     start: [10],
+     tooltips: false,
+     connect: true,
+     behaviour: 'tap-drag',
+     range: {
+       'min': [1, 1],
+
+       '25%': [10, 10],
+       '50%': [50, 10],
+       '75%': [100, 25],
+       '88%': [150, 25],
+       'max': [200]
+     },
+
+     pips: {
+
+       mode: 'positions',
+       values: [1, 5, 10, 20, 50, 75, 100, 150, 200],
+
+       format: wNumb({
+         decimals: 0,
+
+         suffix: 'L'
+       }),
+       density: [15],
+
+     }
+
+   });
+   noUiSlider.create(sliderrate, {
+     start: [11],
+     step: 0.5,
+     tooltips: false,
+     range: {
+       'min': [5],
+       '50%': [10],
+       'max': [20]
+     },
+     pips: {
+       mode: 'range',
+       values: [5, 7.5, 10, 12.5, 15, 17.5, 20],
+       format: wNumb({
+         decimals: 2
+       }),
+       density: 10
+     }
+   });
+   noUiSlider.create(sliderterm, {
+     start: [20],
+     step: 1,
+     tooltips: false,
+     range: {
+       'min': [1],
+       '50%': [15],
+       'max': [30]
+     },
+     pips: {
+       mode: 'range',
+       values: [0, 5, 10, 15, 20, 25, 30],
+       density: 7
+     }
+   });
+
+   slideramount.noUiSlider.on('update', function(values, handle) {
+     //stepSliderValueElement.innerHTML = values[handle];
+     var amount = parseInt(values[handle]) * 100000;
+     $("#txtloan").val(formatcurrency(amount));
+     //alert("loanupdate");
+     Yearlyemi();
+
+    // $('.noUi-value noUi-value-horizontal noUi-value-sub').css('margin-top', '1%');
+   });
+   sliderrate.noUiSlider.on('update', function(values, handle) {
+     //stepSliderValueElement.innerHTML = values[handle];
+     $("#txtrate").val(values[handle]);
+     //alert("rate");
+     //$("#interest").html(values[handle] +" %");
+     Yearlyemi();
+
+   });
+   sliderterm.noUiSlider.on('update', function(values, handle) {
+     //stepSliderValueElement.innerHTML = values[handle];
+     $("#txttenure").val(parseInt(values[handle]));
+     //alert("yrs");
+     Yearlyemi();
+   });
+   $("#txtloan").on('change', function() {
+   
+   var loanamt = this.value;
+   var sliderval = loanamt;
+   loanamt = loanamt.replace(/,/g, "");
+   if (loanamt > 100000) {
+     sliderval = parseInt(loanamt / 100000);
+   }
+   
+   slideramount.noUiSlider.set([sliderval]);
+   Yearlyemi();
+   //$("#slideramount").slider("value", parseInt(loanamt/100000));
+ });
+
+
+
+ $("#txtrate").on('change', function() {
+ 
+   sliderrate.noUiSlider.set([this.value]);
+   // $("#interest").html([this.value] + " %");
+
+   Yearlyemi();
+ });
+ $("#txttenure").on('change', function() {
+   //var loanamt =  parseInt(this.value);
+   var term = parseInt((this.value));
+
+   sliderterm.noUiSlider.set(term);
+   Yearlyemi();
+ });
+ 
+ if ( $(window).width() > 732 ) {      
+  //Add your javascript for large screens here
+   var height = $("#leftDiv").height(); 
+	
+   $("#rightDiv").css('height', height); 
+} 
+else {
+  //Add your javascript for small screens here 
+}
+
+
+   
+ });
+
+
+ function formatcurrency(val) {
+   var formattedvalue = val.toString().replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+   return formattedvalue;
+
+
+ }
+
+ function resetvalue() {
+   //set default values
+   //alert("sdasdas");
+   var amt = 500000;
+   var rate = 10;
+   var term = 20;
+   $("#txtloan").val(amt).trigger("change");
+   $("#txtrate").val(rate).trigger("change");
+   $("#txttenure").val(term).trigger("change");
+   //$("#interest").html(rate + " %");
+   //Yearlyemi();
+ }
+ 
+
+ 
+</script>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-P28P9ZV');</script>
+<!-- End Google Tag Manager -->
+
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P28P9ZV"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div  class="header">
+
+<nav class="navbar " role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand " href="#">EMI Calculator</a>
+    </div>
+    <!-- <ul class="nav navbar-nav"> -->
+      <!-- <li class="active"><a href="#">Home</a></li> -->
+      <!-- <li><a href="#">Link</a></li> -->
+      <!-- <li><a href="#">Link</a></li> -->
+	  <!-- </ul> -->
+ </div></nav>
+ 
+ </div>
+ <div class="container">
+      <div class="price-box">
+        <div class="row row-eq-height-sm  ">
+          <div class="col-sm-6 " >
+                <form class="form-horizontal form-pricing" role="form" id="leftDiv">
+                  <div class="price-slider">	
+<div class="row">				  
+				  <div class="col-lg-12 col-sm-12 col-xs-12">
+                    <h4 >Amount (&#8377;)</h4></div></div>
+					<div class="row">
+					<div  class="col-md-3" style="margin-bottom:10px;"><input   type="text" id="txtloan" class="form-control"   /></div>
+                   <div class="col-md-8 col-md-offset-1" class="form-control">
+					 <div id="slideramount"  ></div>
+                    </div></div></div>
+                  <div class="price-slider">
+				  <div class="row">
+				  <div class="col-lg-12 col-sm-12 col-xs-12">
+				  
+                    <h4 >Interest Rate (%)</h4></div></div>
+					<div class="row">
+					<div  class="col-md-3" style="margin-bottom:10px;">
+					  <input  type="text" id="txtrate"   class="form-control"   />
+                    </div>
+					<div class="col-md-8 col-md-offset-1" class="form-control"><div id="sliderrate"  ></div></div></div>
+                  </div>
+                  <div class="price-slider">
+				  <div class="row">
+				  <div class="col-lg-12 col-sm-12 col-xs-12">
+                    <h4 >Tenure (yrs)</h4></div>	</div>
+<div class="row">					
+					<div  class="col-md-3" style="margin-bottom:10px;">
+					<input   type="text" id="txttenure" class="form-control"  />
+                   </div>
+                    <div class="col-md-8 col-md-offset-1" class="form-control">
+					<div id="sliderterm"  ></div></div>  </div>  
+					</div>
+                </form>
+            </div>
+              <div class="col-sm-6 " id="rightDiv" >
+			 
+			  <div class="form-group form-horizontal form-pricing" >
+			     <div class="price-slider">	
+                      <div class="row">
+					  <div class="col-sm-12  emi text-center"><label> EMI is &#8377; <span id="monthlypayment"  ></span></label>  
+					  </div>
+					   <div class="col-sm-12 emi text-center intrestrate"><label id="paymentcount"></label>
+					  </div>
+					  <div class="col-lg-4 col-sm-4 col-xs-4 col-xs-offset-2  totpay">Principal 
+					  </div>
+					  <div class="col-sm-4    totpay"><span id="principal" class="accrue"></span>
+					  </div>
+					  <div class="col-lg-4 col-sm-4 col-xs-4 col-xs-offset-2  totpay">Interest </div>
+					  
+					  <div class="col-sm-4     totpay"><span id="totintrest" class="accrue"></span>
+					  </div>
+					  <!-- <div class="col-lg-4 col-sm-4 col-xs-4 col-xs-offset-2  totpay">Total  -->
+					  <!-- </div> -->
+					  <div class="col-sm-4   totpay"> <span id="totpayment" class="accrue"></span> 
+					  </div></div></div>
+			</div>
+			  
+			  
+        </div>
+
+          </div>
+		 <div class="clearfix" >
+
+		  <div class="row">
+		  
+		  <div class=" col-sm-8 container-fluid text-centered ">
+			  <div class="table-responsive" id="illustrate">
+			  
+			  </div>
+			  
+			  </div>
+		  </div> </div>
+
+      </div> </div>
+     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- EMIcalculator -->
+<ins class="adsbygoogle"
+   style="display:inline-block;width:728px;height:90px"
+     data-ad-client="ca-pub-1939506783381101"
+     data-ad-slot="3808338293"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+    
+      </body>
+</html>
+    
